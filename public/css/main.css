@@ -1,0 +1,17 @@
+/*body {
+    background-color: black;
+}*/
+
+      .axis text {
+        font: 16pt sans-serif;
+        font-family: 'Poiret One', cursive;
+      }
+
+      .axis path,
+      .axis line {
+        fill: none;
+        stroke: #000;
+        shape-rendering: crispEdges;
+      }
+
+
