@@ -4,6 +4,7 @@ $(document).ready(()=>{
   // const score2 = $('.score2');
       const button = $('.button');
       const switch1 = $('.switch');
+      const salaries = $('.salaries');
       var outerWidth = 1000;
       var outerHeight = 550;
       var margin = { left: 90, top: 50, right: 30, bottom: 200 };
@@ -113,8 +114,158 @@ $(document).ready(()=>{
     }
 
 
+
+    const denverSalaries=(e)=>{
+      // x-ais
+      d3.json('https://api.teleport.org/api/urban_areas/slug:denver/salaries/',function(data){
+      var dataset = data.salaries;
+      console.log(data.salaries);
+      var categories = dataset.map(function(data){
+        return data.job.title
+      })
+
+      var dollars = dataset.map(function(data){
+        return [data.salary_percentiles.percentile_25,data.salary_percentiles.percentile_75]
+      })
+
+      var minArr = dataset.map(function(data){
+        return data.salary_percentiles.percentile_25
+      })
+
+       var maxArr = dataset.map(function(data){
+        return data.salary_percentiles.percentile_75
+      })
+
+       var mediArr = dataset.map(function(data){
+        return data.salary_percentiles.percentile_50
+      })
+      console.log(mediArr)
+      console.log(d3.max(mediArr,function(d){return d}))
+       var totalArr = minArr.concat(maxArr);
+
+      var grid = d3.range(30).map(function(i) {
+      return {
+        'x1': 0,
+        'y1': 0,
+        'x2': 0,
+        'y2': 1200
+      };
+    });
+      var color = d3.scale.linear().domain([0, categories.length]).range(['red','beige']);
+      var xscale = d3.scale.linear()
+      .domain([
+        d3.min(totalArr,function(t){
+        return t
+      }),
+        d3.max(totalArr,function(d){
+             return d
+           })])
+       .range([0, 800]);
+
+    var yscale = d3.scale.linear()
+      .domain([0, categories.length])
+      .range([0, 1200]);
+
+    // var colorScale = d3.scale.quantize()
+    //   .domain([0, categories.length])
+    //   .range(colors);
+
+    var canvas = d3.select('#wrapper')
+      .append('svg')
+      .attr({
+        'width': 1000,
+        'height': 1300
+      });
+
+    var grids = canvas.append('g')
+      .attr('id', 'grid')
+      .attr('transform', 'translate(150,20)')
+      .selectAll('line')
+      .data(grid)
+      .enter()
+      .append('line')
+      .attr({
+        'x1': function(d, i) {
+          return i * 28;
+        },
+        'y1': function(d) {
+          return d.y1;
+        },
+        'x2': function(d, i) {
+          return i * 28;
+        },
+        'y2': function(d) {
+          return d.y2;
+        },
+      })
+      .style({
+        'stroke': '#adadad',
+        'stroke-width': '1px'
+      });
+
+    var xAxis = d3.svg.axis();
+    xAxis
+      .orient('bottom')
+      .scale(xscale)
+
+    var yAxis = d3.svg.axis();
+    yAxis
+      .orient('left')
+      .scale(yscale)
+      .tickSize(2)
+      .tickFormat(function(d, i) {
+        return categories[i];
+      })
+      .tickValues(d3.range(53));
+
+    var y_xis = canvas.append('g')
+      .attr("transform", "translate(150,29)")
+      .attr('id', 'yaxis')
+      .call(yAxis);
+
+    var x_xis = canvas.append('g')
+      .attr("transform", "translate(150,1219)")
+      .attr('id', 'xaxis')
+      .call(xAxis);
+
+    var chart = canvas.append('g')
+      .attr("transform", "translate(150,0)")
+      .attr('id', 'bars')
+      .selectAll('rect')
+      .data(dollars)
+      .enter()
+      .append('rect')
+      .attr('height', 19)
+      .attr({
+        'x': function(d) {
+          return xscale(d[0]);
+        },
+        'y': function(d, i) {
+          return yscale(i) + 19;
+        }
+      })
+      .style('fill', function(h, i) {
+        return color(i);
+      })
+      .attr('width', function(d) {
+        return 0;
+      });
+
+    var transit = d3.select("svg").selectAll("rect")
+      .data(dollars)
+      .transition()
+      .duration(1000)
+      .attr("width", function(d) {
+        return xscale(d[1]) - xscale(d[0]);
+      })
+
+    })
+    }
+
+
    button.on('click',generateChart);
    switch1.on('click',switchChart);
+   salaries.on('click',denverSalaries);
 
 // end of barchart analysis
 

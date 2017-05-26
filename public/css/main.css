@@ -38,4 +38,12 @@
         }
 
 
+       #xaxis .domain {
+      fill: none;
+      stroke: #000;
+    }
 
+    #xaxis text,
+    #yaxis text {
+      font-size: 20px;
+    }
