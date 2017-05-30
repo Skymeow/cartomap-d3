@@ -11,15 +11,12 @@
   <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js" charset="utf-8"></script>
   <script src="/script/main.js"></script>
-
 </head>
 <body>
   <main class="container">
-  <div class="click">
-  <div id="selector_container">
-    <div id="selector_menu">
-      <form>
-
+    <div id="selector_container">
+      <div id="selector_menu">
+        <form>
           <select class="selector">
             <option value="denver">denver</option>
             <option value="seattle">seattle</option>
@@ -29,9 +26,12 @@
             <option value="los-angeles">los angeles</option>
             <option value="washington-dc">DC</option>
           </select>
-        <input type="button" id="scores" value="Scores" style="display: inline-block"/>
-        <input type="button" id="salaries" value="Salaries" style="display: inline-block"/>
+        </div>
+        <div id="buttons">
+          <input type="button" id="scores" value="Scores" style="display: inline-block"/>
+          <input type="button" id="salaries" value="Salaries" style="display: inline-block"/>
         </form>
+        </div>
     </div>
     <div id="d3-elements">
     </div>
@@ -46,7 +46,6 @@
       <div class="scores">"<%= score.score_out_of_10 %>"</div>
     <%})%>
    </section> -->
-
   </main>
 </body>
 </html>

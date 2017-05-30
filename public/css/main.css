@@ -13,37 +13,50 @@
         stroke: #000;
         shape-rendering: crispEdges;
       }
-      .click {
+
+      #selector-container {
         display: flex;
         flex-direction: space-between;
       }
-      .button, .switch {
+
+      .selector {
+        font-size: 20px;
+        margin-left: 5px;
+        flex:2;
+      }
+
+      #buttons {
+        flex:4;
+      }
+
+      #scores, #salaries {
         text-align: center;
         box-sizing: border-box;
-        font-size: 10px;
+        font-size: 20px;
         background-color: #FF4D58;
-        margin-right: 10px;
+        margin-left: 5px;
+        margin-right: 3%;
         padding: 2px 5px;
         border: rgba(255,255,255,1) 1px solid;
       }
 
-      .button:hover {
+      #scores:hover {
           background-color: pink;
           transform: translateY(-5px);
         }
 
-      .switch:hover {
+      #salaries:hover {
           background-color: red;
           transform: translateY(-5px);
         }
 
 
-       #xaxis .domain {
+      #xaxis .domain {
       fill: none;
       stroke: #000;
-    }
+      }
 
-    #xaxis text,
-    #yaxis text {
-      font-size: 20px;
-    }
+      #xaxis text,
+      #yaxis text {
+        font-size: 20px;
+      }

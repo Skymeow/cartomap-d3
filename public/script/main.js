@@ -8,13 +8,11 @@ $(document).ready(()=>{
       var barPadding = 0.2;
       var innerWidth  = outerWidth  - margin.left - margin.right;
       var innerHeight = outerHeight - margin.top  - margin.bottom;
-
       var svg = d3.select("body").append("svg")
         .attr("width",  outerWidth)
         .attr("height", outerHeight);
       var g = svg.append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
       var xAxisG = g.append("g")
         .attr("class", "x axis")
         .attr("transform", "translate(0," + innerHeight + ")")
@@ -22,7 +20,7 @@ $(document).ready(()=>{
       var yAxisG = g.append("g")
         .attr("class", "y axis");
 
-     var xScale = d3.scale.ordinal().rangeBands([0, innerWidth], barPadding);
+      var xScale = d3.scale.ordinal().rangeBands([0, innerWidth], barPadding);
       var yScale = d3.scale.linear().range([innerHeight, 0]);
 
       var xAxis = d3.svg.axis().scale(xScale).orient("bottom").outerTickSize(0);          // Turn off the marks at the end of the axis.
@@ -30,9 +28,9 @@ $(document).ready(()=>{
         .ticks(10)
         .outerTickSize(0); // Turn off the marks at the end of the axis.
       var color = d3.scale.threshold()
-    .domain([3,4,5,6,7,8,9])
-    .range(["#f2f0f7", "#dadaeb", "#bcbddc", "#9e9ac8", "#756bb1", "#54278f","#3c1c67","#48227b"]);
-// first set of analysis
+        .domain([3,4,5,6,7,8,9])
+        .range(["#f2f0f7", "#dadaeb", "#bcbddc", "#9e9ac8", "#756bb1", "#54278f","#3c1c67","#48227b"]);
+      // first set of analysis
       scores.click(function(){
         var value = $('.selector option:selected').val();
       // x-ais
@@ -71,7 +69,7 @@ $(document).ready(()=>{
         bars.exit().remove();
       })
     })
-// end first analysis
+    // end first analysis
 
     salaries.click(function(){
       var value = $('.selector option:selected').val();
@@ -121,101 +119,99 @@ $(document).ready(()=>{
            })])
        .range([0, 800]);
 
-    var yscale = d3.scale.linear()
-      .domain([0, categories.length])
-      .range([0, 1200]);
+      var yscale = d3.scale.linear()
+        .domain([0, categories.length])
+        .range([0, 1200]);
 
-    var canvas = d3.select('#wrapper')
-      .append('svg')
-      .attr({
-        'width': 1000,
-        'height': 1300
-      });
+      var canvas = d3.select('#wrapper')
+        .append('svg')
+        .attr({
+          'width': 1000,
+          'height': 1300
+        });
 
-    var grids = canvas.append('g')
-      .attr('id', 'grid')
-      .attr('transform', 'translate(150,20)')
-      .selectAll('line')
-      .data(grid)
-      .enter()
-      .append('line')
-      .attr({
-        'x1': function(d, i) {
-          return i * 28;
-        },
-        'y1': function(d) {
-          return d.y1;
-        },
-        'x2': function(d, i) {
-          return i * 28;
-        },
-        'y2': function(d) {
-          return d.y2;
-        },
+      var grids = canvas.append('g')
+        .attr('id', 'grid')
+        .attr('transform', 'translate(150,20)')
+        .selectAll('line')
+        .data(grid)
+        .enter()
+        .append('line')
+        .attr({
+          'x1': function(d, i) {
+            return i * 28;
+          },
+          'y1': function(d) {
+            return d.y1;
+          },
+          'x2': function(d, i) {
+            return i * 28;
+          },
+          'y2': function(d) {
+            return d.y2;
+          },
+        })
+        .style({
+          'stroke': '#adadad',
+          'stroke-width': '1px'
+        });
+
+      var xAxis = d3.svg.axis();
+      xAxis
+        .orient('bottom')
+        .scale(xscale)
+
+      var yAxis = d3.svg.axis();
+      yAxis
+        .orient('left')
+        .scale(yscale)
+        .tickSize(2)
+        .tickFormat(function(d, i) {
+          return categories[i];
+        })
+        .tickValues(d3.range(53));
+
+      var y_xis = canvas.append('g')
+        .attr("transform", "translate(150,29)")
+        .attr('id', 'yaxis')
+        .call(yAxis);
+
+      var x_xis = canvas.append('g')
+        .attr("transform", "translate(150,1219)")
+        .attr('id', 'xaxis')
+        .call(xAxis);
+
+      var chart = canvas.append('g')
+        .attr("transform", "translate(150,0)")
+        .attr('id', 'bars')
+        .selectAll('rect')
+        .data(dollars)
+        .enter()
+        .append('rect')
+        .attr('height', 19)
+        .attr({
+          'x': function(d) {
+            return xscale(d[0]);
+          },
+          'y': function(d, i) {
+            return yscale(i) + 19;
+          }
+        })
+        .style('fill', function(h, i) {
+          return color(i);
+        })
+        .attr('width', function(d) {
+          return 0;
+        });
+
+      var transit = d3.select("svg").selectAll("rect")
+        .data(dollars)
+        .transition()
+        .duration(1000)
+        .attr("width", function(d) {
+          return xscale(d[1]) - xscale(d[0]);
+        })
       })
-      .style({
-        'stroke': '#adadad',
-        'stroke-width': '1px'
-      });
-
-    var xAxis = d3.svg.axis();
-    xAxis
-      .orient('bottom')
-      .scale(xscale)
-
-    var yAxis = d3.svg.axis();
-    yAxis
-      .orient('left')
-      .scale(yscale)
-      .tickSize(2)
-      .tickFormat(function(d, i) {
-        return categories[i];
       })
-      .tickValues(d3.range(53));
-
-    var y_xis = canvas.append('g')
-      .attr("transform", "translate(150,29)")
-      .attr('id', 'yaxis')
-      .call(yAxis);
-
-    var x_xis = canvas.append('g')
-      .attr("transform", "translate(150,1219)")
-      .attr('id', 'xaxis')
-      .call(xAxis);
-
-    var chart = canvas.append('g')
-      .attr("transform", "translate(150,0)")
-      .attr('id', 'bars')
-      .selectAll('rect')
-      .data(dollars)
-      .enter()
-      .append('rect')
-      .attr('height', 19)
-      .attr({
-        'x': function(d) {
-          return xscale(d[0]);
-        },
-        'y': function(d, i) {
-          return yscale(i) + 19;
-        }
-      })
-      .style('fill', function(h, i) {
-        return color(i);
-      })
-      .attr('width', function(d) {
-        return 0;
-      });
-
-    var transit = d3.select("svg").selectAll("rect")
-      .data(dollars)
-      .transition()
-      .duration(1000)
-      .attr("width", function(d) {
-        return xscale(d[1]) - xscale(d[0]);
-      })
-
-    })
-    })
-// end of barchart analysis
-
+     // end of barchart analysis
 })
