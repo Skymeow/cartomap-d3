@@ -2,44 +2,49 @@ $(document).ready(()=>{
   console.log('main.js is linked');
       const scores = $('#scores');
       const salaries = $('#salaries');
-      var outerWidth = 1000;
-      var outerHeight = 550;
-      var margin = { left: 90, top: 50, right: 30, bottom: 200 };
-      var barPadding = 0.2;
-      var innerWidth  = outerWidth  - margin.left - margin.right;
-      var innerHeight = outerHeight - margin.top  - margin.bottom;
-      var svg = d3.select("body").append("svg")
+      const outerWidth = 1000;
+      const outerHeight = 550;
+      const margin = { left: 90, top: 50, right: 30, bottom: 200 };
+      const barPadding = 0.2;
+      const innerWidth  = outerWidth  - margin.left - margin.right;
+      const innerHeight = outerHeight - margin.top  - margin.bottom;
+      const svg = d3.select("#d3-elements").append("svg")
         .attr("width",  outerWidth)
         .attr("height", outerHeight);
-      var g = svg.append("g")
+
+      const g = svg.append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-      var xAxisG = g.append("g")
+
+      const xAxisG = g.append("g")
         .attr("class", "x axis")
         .attr("transform", "translate(0," + innerHeight + ")")
 
-      var yAxisG = g.append("g")
+      const yAxisG = g.append("g")
         .attr("class", "y axis");
 
-      var xScale = d3.scale.ordinal().rangeBands([0, innerWidth], barPadding);
-      var yScale = d3.scale.linear().range([innerHeight, 0]);
+      const xScale = d3.scale.ordinal().rangeBands([0, innerWidth], barPadding);
+      const yScale = d3.scale.linear().range([innerHeight, 0]);
 
-      var xAxis = d3.svg.axis().scale(xScale).orient("bottom").outerTickSize(0);          // Turn off the marks at the end of the axis.
-      var yAxis = d3.svg.axis().scale(yScale).orient("left")
+      const xAxis = d3.svg.axis().scale(xScale).orient("bottom").outerTickSize(0);          // Turn off the marks at the end of the axis.
+      const yAxis = d3.svg.axis().scale(yScale).orient("left")
         .ticks(10)
         .outerTickSize(0); // Turn off the marks at the end of the axis.
-      var color = d3.scale.threshold()
+
+      const color = d3.scale.threshold()
         .domain([3,4,5,6,7,8,9])
         .range(["#f2f0f7", "#dadaeb", "#bcbddc", "#9e9ac8", "#756bb1", "#54278f","#3c1c67","#48227b"]);
       // first set of analysis
       scores.click(function(){
-        var value = $('.selector option:selected').val();
+        const value = $('.selector option:selected').val();
       // x-ais
       d3.json(`https://api.teleport.org/api/urban_areas/slug:${value}/scores/`,function(data){
-      var dataset = data.categories;
-      var newArr = dataset.map(function(data){
+      const dataset = data.categories;
+
+      const newArr = dataset.map(function(data){
         return data.score_out_of_10
       })
-      var newArrName = dataset.map(function(data){
+
+      const newArrName = dataset.map(function(data){
         return data.name
       })
         xScale.domain(newArrName)
@@ -52,7 +57,7 @@ $(document).ready(()=>{
             .attr("transform", "rotate(-65)");;
         yAxisG.call(yAxis);
 
-        var bars = g.selectAll("rect").data(newArr);
+        const bars = g.selectAll("rect").data(newArr);
         bars.enter().append("rect")
           .attr("width", xScale.rangeBand());
         bars
@@ -70,69 +75,80 @@ $(document).ready(()=>{
       })
     })
     // end first analysis
-
-    salaries.click(function(){
-      var value = $('.selector option:selected').val();
-      // x-ais
-      d3.json(`https://api.teleport.org/api/urban_areas/slug:${value}/salaries/`,function(data){
-      var dataset = data.salaries;
-      console.log(data.salaries);
-      var categories = dataset.map(function(data){
-        return data.job.title
-      })
-
-      var dollars = dataset.map(function(data){
-        return [data.salary_percentiles.percentile_25,data.salary_percentiles.percentile_75]
-      })
-
-      var minArr = dataset.map(function(data){
-        return data.salary_percentiles.percentile_25
-      })
-
-       var maxArr = dataset.map(function(data){
-        return data.salary_percentiles.percentile_75
-      })
-
-       var mediArr = dataset.map(function(data){
-        return data.salary_percentiles.percentile_50
-      })
-      console.log(mediArr)
-      console.log(d3.max(mediArr,function(d){return d}))
-       var totalArr = minArr.concat(maxArr);
-
-      var grid = d3.range(30).map(function(i) {
+    const grid = d3.range(28).map(function(i) {
       return {
         'x1': 0,
-        'y1': 0,
+        'y1': 29,
         'x2': 0,
         'y2': 1200
       };
     });
-      var color = d3.scale.linear().domain([0, categories.length]).range(['red','beige']);
-      var xscale = d3.scale.linear()
-      .domain([
-        d3.min(totalArr,function(t){
-        return t
-      }),
-        d3.max(totalArr,function(d){
-             return d
-           })])
-       .range([0, 800]);
 
-      var yscale = d3.scale.linear()
-        .domain([0, categories.length])
-        .range([0, 1200]);
-
-      var canvas = d3.select('#wrapper')
+    const canvas = d3.select('#wrapper')
         .append('svg')
         .attr({
           'width': 1000,
           'height': 1300
         });
 
-      var grids = canvas.append('g')
+      const xscale = d3.scale.linear()
+        .range([0, 900]);
+
+      const yscale = d3.scale.linear()
+         .range([19, 1200])
+
+      const x2Axis = d3.svg.axis();
+      x2Axis
+        .orient('bottom')
+        .scale(xscale)
+
+      const y2Axis = d3.svg.axis();
+      y2Axis
+        .orient('left')
+        .scale(yscale)
+    salaries.click(function(){
+      const value = $('.selector option:selected').val();
+      // x-ais
+      d3.json(`https://api.teleport.org/api/urban_areas/slug:${value}/salaries/`,function(data){
+      const dataset = data.salaries;
+
+      const categories = dataset.map(function(data){
+        return data.job.title
+      })
+
+      const dollars = dataset.map(function(data){
+        return [data.salary_percentiles.percentile_25,data.salary_percentiles.percentile_75]
+      })
+
+      const minArr = dataset.map(function(data){
+        return data.salary_percentiles.percentile_25
+      })
+
+       const maxArr = dataset.map(function(data){
+        return data.salary_percentiles.percentile_75
+      })
+
+       const mediArr = dataset.map(function(data){
+        return data.salary_percentiles.percentile_50
+      })
+
+      const totalArr = minArr.concat(maxArr);
+
+      const color = d3.scale.linear().domain([0, categories.length]).range(['red','beige']);
+
+      xscale.domain([
+        d3.min(totalArr,function(t){
+        return t
+      }),
+        d3.max(totalArr,function(d){
+             return d
+           })]);
+
+      yscale.domain([0, categories.length])
+
+      const grids = canvas.append('g')
         .attr('id', 'grid')
-        .attr('transform', 'translate(150,20)')
+        .attr('transform', 'translate(230,20)')
         .selectAll('line')
         .data(grid)
         .enter()
@@ -156,33 +172,26 @@ $(document).ready(()=>{
           'stroke-width': '1px'
         });
 
-      var xAxis = d3.svg.axis();
-      xAxis
-        .orient('bottom')
-        .scale(xscale)
-
-      var yAxis = d3.svg.axis();
-      yAxis
-        .orient('left')
-        .scale(yscale)
+      y2Axis
         .tickSize(2)
         .tickFormat(function(d, i) {
           return categories[i];
         })
         .tickValues(d3.range(53));
 
-      var y_xis = canvas.append('g')
-        .attr("transform", "translate(150,29)")
+      const y_xis = canvas.append('g')
+        .attr("transform", "translate(230,29)")
         .attr('id', 'yaxis')
-        .call(yAxis);
+        .call(y2Axis);
 
-      var x_xis = canvas.append('g')
-        .attr("transform", "translate(150,1219)")
+      const x_xis = canvas.append('g')
+        .attr("transform", "translate(230,1219)")
         .attr('id', 'xaxis')
-        .call(xAxis);
+        .call(x2Axis)
 
-      var chart = canvas.append('g')
-        .attr("transform", "translate(150,0)")
+
+      const chart = canvas.append('g')
+        .attr("transform", "translate(230,0)")
         .attr('id', 'bars')
         .selectAll('rect')
         .data(dollars)
@@ -191,7 +200,7 @@ $(document).ready(()=>{
         .attr('height', 19)
         .attr({
           'x': function(d) {
-            return xscale(d[0]);
+            return xscale(d[0])+2;
           },
           'y': function(d, i) {
             return yscale(i) + 19;
@@ -204,13 +213,14 @@ $(document).ready(()=>{
           return 0;
         });
 
-      var transit = d3.select("svg").selectAll("rect")
+      const transit = d3.select("#wrapper").selectAll("rect")
         .data(dollars)
         .transition()
         .duration(1000)
         .attr("width", function(d) {
           return xscale(d[1]) - xscale(d[0]);
         })
+        ;
       })
       })
      // end of barchart analysis
