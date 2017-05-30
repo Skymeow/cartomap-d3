@@ -16,10 +16,23 @@
 <body>
   <main class="container">
   <div class="click">
-    <input class="button" type="submit" value="see Denver">
-    <input class="switch" type="submit" value="see Seattle">
-    <input class="salaries" type="submit" value="see Denver salaries">
-  </div>
+  <div id="selector_container">
+    <div id="selector_menu">
+      <form>
+
+          <select class="selector">
+            <option value="denver">denver</option>
+            <option value="seattle">seattle</option>
+            <option value="san-francisco-bay-area">san francisco</option>
+            <option value="pittsburgh">pittsburgh</option>
+            <option value="new-york">new york</option>
+            <option value="los-angeles">los angeles</option>
+            <option value="washington-dc">DC</option>
+          </select>
+        <input type="button" id="scores" value="Scores" style="display: inline-block"/>
+        <input type="button" id="salaries" value="Salaries" style="display: inline-block"/>
+        </form>
+    </div>
     <div id="d3-elements">
     </div>
     <div class="nyc-crime-hospitals">

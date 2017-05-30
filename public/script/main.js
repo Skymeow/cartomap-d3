@@ -1,10 +1,7 @@
 $(document).ready(()=>{
   console.log('main.js is linked');
-  // const housing = $('.housing');
-  // const score2 = $('.score2');
-      const button = $('.button');
-      const switch1 = $('.switch');
-      const salaries = $('.salaries');
+      const scores = $('#scores');
+      const salaries = $('#salaries');
       var outerWidth = 1000;
       var outerHeight = 550;
       var margin = { left: 90, top: 50, right: 30, bottom: 200 };
@@ -36,9 +33,10 @@ $(document).ready(()=>{
     .domain([3,4,5,6,7,8,9])
     .range(["#f2f0f7", "#dadaeb", "#bcbddc", "#9e9ac8", "#756bb1", "#54278f","#3c1c67","#48227b"]);
 // first set of analysis
-     const generateChart=(e)=>{
+      scores.click(function(){
+        var value = $('.selector option:selected').val();
       // x-ais
-      d3.json('https://api.teleport.org/api/urban_areas/slug:denver/scores/',function(data){
+      d3.json(`https://api.teleport.org/api/urban_areas/slug:${value}/scores/`,function(data){
       var dataset = data.categories;
       var newArr = dataset.map(function(data){
         return data.score_out_of_10
@@ -72,52 +70,13 @@ $(document).ready(()=>{
       });
         bars.exit().remove();
       })
-    }
+    })
 // end first analysis
-  const switchChart=(e)=>{
+
+    salaries.click(function(){
+      var value = $('.selector option:selected').val();
       // x-ais
-      d3.json('https://api.teleport.org/api/urban_areas/slug:seattle/scores/',function(data){
-      var dataset = data.categories;
-      var newArr = dataset.map(function(data){
-        return data.score_out_of_10
-      })
-      var newArrName = dataset.map(function(data){
-        return data.name
-      })
-
-        xScale.domain(newArrName)
-        yScale.domain([0, d3.max(newArr,function(d){
-           return d
-         })]);
-        xAxisG.call(xAxis).selectAll("text").style("text-anchor", "end")
-            .attr("dx", "-.8em")
-            .attr("dy", ".15em")
-            .attr("transform", "rotate(-65)");;
-        yAxisG.call(yAxis);
-
-        var bars = g.selectAll("rect").data(newArr);
-        bars.enter().append("rect")
-          .attr("width", xScale.rangeBand());
-        bars
-           .attr("x",function(d,i){
-            return xScale(newArrName[i]);
-          })
-          .attr("y", function(d,i){
-            return yScale(newArr[i]);
-          })
-          .attr("height", function (d,i){ return innerHeight - yScale(newArr[i])})
-          .attr("fill", function(d) {
-        return color(d);
-      });;
-        bars.exit().remove();
-      })
-    }
-
-
-
-    const denverSalaries=(e)=>{
-      // x-ais
-      d3.json('https://api.teleport.org/api/urban_areas/slug:denver/salaries/',function(data){
+      d3.json(`https://api.teleport.org/api/urban_areas/slug:${value}/salaries/`,function(data){
       var dataset = data.salaries;
       console.log(data.salaries);
       var categories = dataset.map(function(data){
@@ -165,10 +124,6 @@ $(document).ready(()=>{
     var yscale = d3.scale.linear()
       .domain([0, categories.length])
       .range([0, 1200]);
-
-    // var colorScale = d3.scale.quantize()
-    //   .domain([0, categories.length])
-    //   .range(colors);
 
     var canvas = d3.select('#wrapper')
       .append('svg')
@@ -260,13 +215,7 @@ $(document).ready(()=>{
       })
 
     })
-    }
-
-
-   button.on('click',generateChart);
-   switch1.on('click',switchChart);
-   salaries.on('click',denverSalaries);
-
+    })
 // end of barchart analysis
 
 })
