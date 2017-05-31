@@ -1,5 +1,23 @@
 $(document).ready(()=>{
   console.log('main.js is linked');
+
+  // get current time by cities
+  // const city = $('.selector option:selected').val();
+  // console.log(city);
+    const currentTime = $('#time');
+    const timeText = $('.time-content');
+    currentTime.click(function(){
+      const city = $('.selector option:selected').val();
+    console.log(city);
+       fetch(`https://timezoneapi.io/api/address/?${city}`)
+      .then(r=>r.json())
+      .then(data=>{
+        console.log('******',data.data.addresses[0].datetime.date_time_txt)
+        data = data.data.addresses[0].datetime.date_time_txt
+        timeText.html(data)
+
+      })
+    })
       const scores = $('#scores');
       const salaries = $('#salaries');
       const outerWidth = 1000;
