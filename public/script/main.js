@@ -69,10 +69,10 @@ $(document).ready(()=>{
           })
           .attr("height", function (d,i){ return innerHeight - yScale(newArr[i])})
           .attr("fill", function(d) {
-        return color(d);
-      });
-        bars.exit().remove();
-      })
+            return color(d);
+          });
+           bars.exit().remove();
+        })
     })
     // end first analysis
     const grid = d3.range(28).map(function(i) {
@@ -91,21 +91,18 @@ $(document).ready(()=>{
           'height': 1300
         });
 
-      const xscale = d3.scale.linear()
-        .range([0, 900]);
 
-      const yscale = d3.scale.linear()
-         .range([19, 1200])
+    const yscale = d3.scale.linear()
+       .range([19, 1200]);
+    const y2Axis = d3.svg.axis().scale(yscale).orient('left');
 
-      const x2Axis = d3.svg.axis();
-      x2Axis
-        .orient('bottom')
-        .scale(xscale)
+    const x_xis = canvas.append('g')
+      .attr("transform", "translate(230,1219)")
+      .attr('id', 'xaxis');
+    const xscale = d3.scale.linear()
+            .range([0, 900]);
+    const x2Axis = d3.svg.axis().scale(xscale).orient('bottom');
 
-      const y2Axis = d3.svg.axis();
-      y2Axis
-        .orient('left')
-        .scale(yscale)
     salaries.click(function(){
       const value = $('.selector option:selected').val();
       // x-ais
@@ -120,6 +117,7 @@ $(document).ready(()=>{
         return [data.salary_percentiles.percentile_25,data.salary_percentiles.percentile_75]
       })
 
+
       const minArr = dataset.map(function(data){
         return data.salary_percentiles.percentile_25
       })
@@ -133,18 +131,21 @@ $(document).ready(()=>{
       })
 
       const totalArr = minArr.concat(maxArr);
-
+      console.log(dollars)
+      console.log(totalArr)
       const color = d3.scale.linear().domain([0, categories.length]).range(['red','beige']);
 
       xscale.domain([
-        d3.min(totalArr,function(t){
-        return t
+        d3.min(totalArr,function(d){
+        return d
       }),
         d3.max(totalArr,function(d){
              return d
            })]);
 
-      yscale.domain([0, categories.length])
+      x_xis.call(x2Axis);
+
+      yscale.domain([0, categories.length]);
 
       const grids = canvas.append('g')
         .attr('id', 'grid')
@@ -184,12 +185,6 @@ $(document).ready(()=>{
         .attr('id', 'yaxis')
         .call(y2Axis);
 
-      const x_xis = canvas.append('g')
-        .attr("transform", "translate(230,1219)")
-        .attr('id', 'xaxis')
-        .call(x2Axis)
-
-
       const chart = canvas.append('g')
         .attr("transform", "translate(230,0)")
         .attr('id', 'bars')
@@ -219,9 +214,8 @@ $(document).ready(()=>{
         .duration(1000)
         .attr("width", function(d) {
           return xscale(d[1]) - xscale(d[0]);
-        })
-        ;
+        });
       })
-      })
+    })
      // end of barchart analysis
 })
