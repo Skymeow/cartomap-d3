@@ -1,24 +1,37 @@
 $(document).ready(()=>{
   console.log('main.js is linked');
-
-  // get current time by cities
-  // const city = $('.selector option:selected').val();
-  // console.log(city);
-    const currentTime = $('#time');
-    const timeText = $('.time-content');
-    currentTime.click(function(){
+      // start of get current time by city
+      const currentTime = $('#time');
+      const timeText = $('.time-content');
+      currentTime.click(function(){
       const city = $('.selector option:selected').val();
-    console.log(city);
+      console.log(city);
        fetch(`https://timezoneapi.io/api/address/?${city}`)
       .then(r=>r.json())
       .then(data=>{
-        console.log('******',data.data.addresses[0].datetime.date_time_txt)
+        // console.log('******',data.data.addresses[0].datetime.date_time_txt)
         data = data.data.addresses[0].datetime.date_time_txt
         timeText.html(data)
 
       })
     })
+    // start of get pics of city
+    const pic = $('#pic');
+    const picContainer = $('.picContainer');
+    pic.click(function(){
+      const city = $('.selector option:selected').val();
+      console.log(city);
+       fetch(`https://api.teleport.org/api/urban_areas/slug:${city}/images/`)
+      .then(r=>r.json())
+      .then(data=>{
+        data = data.photos[0].image.web
+        console.log(data)
+        picContainer.attr('src', data)
+      })
+    })
+      // start of d3 visualization
       const scores = $('#scores');
+      const summary = $('.summary');
       const salaries = $('#salaries');
       const outerWidth = 1000;
       const outerHeight = 550;
@@ -57,7 +70,13 @@ $(document).ready(()=>{
       // x-ais
       d3.json(`https://api.teleport.org/api/urban_areas/slug:${value}/scores/`,function(data){
       const dataset = data.categories;
-
+      const text = data.summary;
+      const totalScore = data.teleport_city_score;
+      const sumScore = $('.sum-score');
+      sumScore.html(totalScore);
+      console.log(text);
+      summary.html(text);
+      $(".summary p:nth-of-type(2)").hide();
       const newArr = dataset.map(function(data){
         return data.score_out_of_10
       })
@@ -92,34 +111,34 @@ $(document).ready(()=>{
            bars.exit().remove();
         })
     })
-    // end first analysis
-    const grid = d3.range(28).map(function(i) {
-      return {
-        'x1': 0,
-        'y1': 29,
-        'x2': 0,
-        'y2': 1200
-      };
-    });
-
-    const canvas = d3.select('#wrapper')
-        .append('svg')
-        .attr({
-          'width': 1000,
-          'height': 1300
+        // end first analysis
+        const grid = d3.range(28).map(function(i) {
+          return {
+            'x1': 0,
+            'y1': 29,
+            'x2': 0,
+            'y2': 1200
+          };
         });
 
+        const canvas = d3.select('#wrapper')
+            .append('svg')
+            .attr({
+              'width': 1000,
+              'height': 1300
+            });
 
-    const yscale = d3.scale.linear()
-       .range([19, 1200]);
-    const y2Axis = d3.svg.axis().scale(yscale).orient('left');
 
-    const x_xis = canvas.append('g')
-      .attr("transform", "translate(230,1219)")
-      .attr('id', 'xaxis');
-    const xscale = d3.scale.linear()
-            .range([0, 900]);
-    const x2Axis = d3.svg.axis().scale(xscale).orient('bottom');
+        const yscale = d3.scale.linear()
+           .range([19, 1200]);
+        const y2Axis = d3.svg.axis().scale(yscale).orient('left');
+
+        const x_xis = canvas.append('g')
+          .attr("transform", "translate(230,1219)")
+          .attr('id', 'xaxis');
+        const xscale = d3.scale.linear()
+                .range([0, 900]);
+        const x2Axis = d3.svg.axis().scale(xscale).orient('bottom');
 
     salaries.click(function(){
       const value = $('.selector option:selected').val();
