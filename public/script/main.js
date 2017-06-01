@@ -39,9 +39,13 @@ $(document).ready(()=>{
       const barPadding = 0.2;
       const innerWidth  = outerWidth  - margin.left - margin.right;
       const innerHeight = outerHeight - margin.top  - margin.bottom;
-      const svg = d3.select("#d3-elements").append("svg")
-        .attr("width",  outerWidth)
-        .attr("height", outerHeight);
+      const svg = d3.select("#d3-elements").append("div")
+        .classed("svg-container", true)
+        .append("svg")
+        .attr("preserveAspectRatio", "xMinYMin meet")
+         .attr("viewBox", "0 0 1000 550")
+         .classed("svg-content-responsive", true);
+
 
       const g = svg.append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
@@ -121,12 +125,16 @@ $(document).ready(()=>{
           };
         });
 
-        const canvas = d3.select('#wrapper')
-            .append('svg')
-            .attr({
-              'width': 1000,
-              'height': 1300
-            });
+        const canvas = d3.select('#wrapper').append("div")
+             .classed("canvas-container", true)
+             .append("svg")
+             .attr("preserveAspectRatio", "xMinYMin meet")
+             .attr("viewBox", "0 0 1000 1300")
+             .classed("canvas-content-responsive", true);
+            // .attr({
+            //   'width': 1000,
+            //   'height': 1300
+            // });
 
 
         const yscale = d3.scale.linear()
