@@ -1,32 +1,29 @@
 $(document).ready(()=>{
   console.log('main.js is linked');
-      // start of get current time by city
-      const currentTime = $('#time');
-      const timeText = $('.time-content');
-      currentTime.click(function(){
-      const city = $('.selector option:selected').val();
-      console.log(city);
-       fetch(`https://timezoneapi.io/api/address/?${city}`)
-      .then(r=>r.json())
-      .then(data=>{
-        // console.log('******',data.data.addresses[0].datetime.date_time_txt)
-        data = data.data.addresses[0].datetime.date_time_txt
-        timeText.html(data)
-
-      })
-    })
-    // start of get pics of city
+    // start of get current time by city
+    const currentTime = $('#time');
+    const timeText = $('.time-content');
+    const go = $('#go');
+    const map = $('.nyc-crime-hospitals');
     const pic = $('#pic');
     const picContainer = $('.picContainer');
-    pic.click(function(){
-      const city = $('.selector option:selected').val();
-      console.log(city);
+    picContainer.attr('style', 'visibility: hidden');
+
+    go.click(function(){
+     var city = $('.selector option:selected').val();
+     fetch(`https://timezoneapi.io/api/address/?${city}`)
+    .then(r=>r.json())
+    .then(data=>{
+      data = data.data.addresses[0].datetime.date_time_txt
+      timeText.html(data)
+    })
+    // start of get pics of city
+      picContainer.attr('style', 'visibility: visible')
        fetch(`https://api.teleport.org/api/urban_areas/slug:${city}/images/`)
       .then(r=>r.json())
-      .then(data=>{
-        data = data.photos[0].image.web
-        console.log(data)
-        picContainer.attr('src', data)
+      .then(url=>{
+        url = url.photos[0].image.web
+        picContainer.attr('src', url)
       })
     })
       // start of d3 visualization
@@ -40,12 +37,11 @@ $(document).ready(()=>{
       const innerWidth  = outerWidth  - margin.left - margin.right;
       const innerHeight = outerHeight - margin.top  - margin.bottom;
       const svg = d3.select("#d3-elements").append("div")
-        .classed("svg-container", true)
-        .append("svg")
-        .attr("preserveAspectRatio", "xMinYMin meet")
-         .attr("viewBox", "0 0 1000 550")
-         .classed("svg-content-responsive", true);
-
+       .classed("svg-container", true)
+       .append("svg")
+       .attr("preserveAspectRatio", "xMinYMin meet")
+       .attr("viewBox", "0 0 1000 550")
+       .classed("svg-content-responsive", true);
 
       const g = svg.append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
@@ -70,6 +66,7 @@ $(document).ready(()=>{
         .range(["#f2f0f7", "#dadaeb", "#bcbddc", "#9e9ac8", "#756bb1", "#54278f","#3c1c67","#48227b"]);
       // first set of analysis
       scores.click(function(){
+        $(window).scrollTo($('#d3-elements'),1000);
         const value = $('.selector option:selected').val();
       // x-ais
       d3.json(`https://api.teleport.org/api/urban_areas/slug:${value}/scores/`,function(data){
@@ -97,7 +94,6 @@ $(document).ready(()=>{
             .attr("dy", ".15em")
             .attr("transform", "rotate(-65)");;
         yAxisG.call(yAxis);
-
         const bars = g.selectAll("rect").data(newArr);
         bars.enter().append("rect")
           .attr("width", xScale.rangeBand());
@@ -131,11 +127,6 @@ $(document).ready(()=>{
              .attr("preserveAspectRatio", "xMinYMin meet")
              .attr("viewBox", "0 0 1000 1300")
              .classed("canvas-content-responsive", true);
-            // .attr({
-            //   'width': 1000,
-            //   'height': 1300
-            // });
-
 
         const yscale = d3.scale.linear()
            .range([19, 1200]);
@@ -149,6 +140,7 @@ $(document).ready(()=>{
         const x2Axis = d3.svg.axis().scale(xscale).orient('bottom');
 
     salaries.click(function(){
+      $(window).scrollTo($('#wrapper'),1000);
       const value = $('.selector option:selected').val();
       // x-ais
       d3.json(`https://api.teleport.org/api/urban_areas/slug:${value}/salaries/`,function(data){
