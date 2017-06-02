@@ -1,16 +1,21 @@
 $(document).ready(()=>{
+  $('iframe').hide();
   console.log('main.js is linked');
-    // start of get current time by city
     const currentTime = $('#time');
     const timeText = $('.time-content');
     const go = $('#go');
-    const map = $('.nyc-crime-hospitals');
     const pic = $('#pic');
     const picContainer = $('.picContainer');
     picContainer.attr('style', 'visibility: hidden');
 
     go.click(function(){
      var city = $('.selector option:selected').val();
+     if(city === "new-york"){
+        $('iframe').show();
+      }else{
+        $('iframe').hide();
+      }
+     // start of get current time by city
      fetch(`https://timezoneapi.io/api/address/?${city}`)
     .then(r=>r.json())
     .then(data=>{
@@ -71,6 +76,7 @@ $(document).ready(()=>{
       // x-ais
       d3.json(`https://api.teleport.org/api/urban_areas/slug:${value}/scores/`,function(data){
       const dataset = data.categories;
+      console.log(data.categories);
       const text = data.summary;
       const totalScore = data.teleport_city_score;
       const sumScore = $('.sum-score');
